@@ -1,0 +1,21 @@
+<?xml version="1.0"?><svg width="533.3333333333333" height="533.3333333333333" xmlns="http://www.w3.org/2000/svg">
+ <title>rocket</title>
+
+ <g>
+  <title>Layer 1</title>
+  <rect fill="#000000" stroke="#000000" stroke-width="5" x="-1.333303" y="-5.335059" width="535.000008" height="540.999986" id="svg_2"/>
+  <g id="g846">
+   <path d="m17.806299,31.099001c78.857,1.6957 278.117987,33.916601 354.430975,229.78668c-26.28598,5.088013 -90.72699,67.834015 -100.901978,102.598022c-194.174034,-99.206024 -249.289417,-256.071991 -253.528997,-332.384703z" id="path663" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#d9d9d9"/>
+   <path d="m163.649307,292.258698c0,0 3.390991,86.488007 3.390991,87.335999c0,0.847992 104.294998,48.332001 110.229996,50.876007l-5.087006,-67.834015c-9.326996,0.847992 -92.423981,-52.570984 -108.533981,-70.377991z" id="path664" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#ff0000"/>
+   <path d="m304.733551,151.352783c0,0 85.530945,3.820038 86.378662,3.840881c0.847748,0.020828 45.754395,105.451263 48.151794,111.44696l-67.688507,-6.752441c-9.098663,-33.045593 -46.892853,-88.600143 -66.841949,-108.5354z" id="path665" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#ff0000"/>
+   <path d="m235.316772,210.169052c0,0 14.259979,34.122604 16.66716,39.685852c2.953842,3.748337 77.589035,64.656357 83.067612,68.074173l-3.178864,-21.680725c-7.994232,-7.698639 -76.803391,-68.015976 -96.555908,-86.0793z" id="path666" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#bfbfbf"/>
+   <path d="m232.636536,209.39949l-16.768509,24.280228l20.644791,35.733917l85.753967,67.744385l12.387604,-18.545471l-81.991364,-69.240036l-20.026489,-39.973022z" id="path667" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#bfbfbf"/>
+   <path d="m124.644997,131.154007c-28.829796,39.003998 30.52401,87.335999 58.506004,52.570999c33.916992,-42.396011 -24.589005,-83.096008 -58.506004,-52.570999z" id="path668" stroke-linejoin="round" stroke-width="12.5" stroke="#000000" fill-rule="evenodd" fill="#bfbfbf"/>
+   <path d="m132.276001,135.393005c21.197998,-20.350006 70.376999,4.23999 48.332001,40.700989c-24.589996,31.372009 -74.617004,-8.478989 -48.332001,-40.700989z" id="path669" stroke-linejoin="round" stroke-width="10" stroke="#000000" fill-rule="evenodd" fill="#aeffff"/>
+   <path d="m148.386002,134.501999c-6.860886,4.737549 -24.900513,19.623886 -10.175003,37.352005c12.718994,3.391998 30.524994,-35.656006 10.175003,-37.352005z" id="path670" stroke-linejoin="round" stroke-width="12.5" fill-rule="evenodd" fill-opacity="0.75" fill="#ffffff"/>
+  </g>
+  <text transform="rotate(-39.7102, 268.832, 156.972) matrix(2.15867, 6.11649e-08, -7.40006e-08, 2.09627, -334.132, -178.154)" xml:space="preserve" text-anchor="middle" font-family="Arial" font-size="24" id="svg_3" y="167.892" x="279.837" stroke-width="0" stroke="#000000" fill="#0000ff">e</text>
+  <text id="svg_4" transform="rotate(-39.7102, 299.324, 194.036) matrix(2.37849, 2.25259e-08, 8.79657e-08, 2.02744, -397.198, -167.6)" xml:space="preserve" text-anchor="middle" font-family="Arial" font-size="24" y="186.312" x="292.707" stroke-width="0" stroke="#000000" fill="#0000ff">c</text>
+  <text id="svg_5" transform="rotate(-39.7102, 329.064, 230.993) matrix(2.42472, 1.20301e-08, 2.13768e-08, 1.95675, -417.538, -161.647)" xml:space="preserve" text-anchor="middle" font-family="Arial" font-size="24" y="208.327" x="308.154" stroke-width="0" stroke="#000000" fill="#0000ff">o</text>
+ </g>
+</svg>
