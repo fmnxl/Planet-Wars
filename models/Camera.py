@@ -4,7 +4,7 @@ from lib.euclid import *
 class Camera(object):
 	def __init__(self, screenSize):
 		# self.minZoom = float(screenSize[1]) / float(observableUniverse[1]) + 1
-		self.minZoom = 0.0
+		self.minZoom = 1.0
 		self.maxZoom = 55.0
 		self.zoom = 20.0
 		self.center = Vector2(0, 0)

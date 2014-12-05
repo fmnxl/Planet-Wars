@@ -8,24 +8,24 @@ from scenes.GameScene import GameScene
 
 pygame.init()
 modes = pygame.display.list_modes(32)
-size = Config.screenWidth, Config.screenHeight = modes[4]
-flags = pygame.DOUBLEBUF | pygame.HWSURFACE | pygame.FULLSCREEN
-screen = pygame.display.set_mode(size, flags)
-pygame.display.set_caption('Rocketry')
+size = Config.screenWidth, Config.screenHeight = modes[Config.screenMode]
+screen = pygame.display.set_mode(size, Config.getScreenFlags())
+pygame.display.set_caption(Config.caption)
 clock = pygame.time.Clock()
 
 pygame.mouse.set_visible(True)
 
 manager = SceneMananger(TitleScene())
 
+# bg music
 pygame.mixer.init()
 pygame.mixer.set_num_channels(8)
-pygame.mixer.music.load("sound/bg.ogg")
+pygame.mixer.music.load(Config.bgMusic)
 pygame.mixer.music.play(-1)
 
 def main():
 	while True:
-		clock.tick(40)
+		clock.tick(Config.fps)
 		deltaTime = clock.get_time() / 1000.0
 
 		events = pygame.event.get()

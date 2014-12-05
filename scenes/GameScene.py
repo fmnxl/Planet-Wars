@@ -25,7 +25,9 @@ class GameScene(Scene):
 		self.level = 1
 		self.paused = False
 
-		self.camera = Camera(Vector2(Config.screenWidth, Config.screenHeight))
+		modes = pygame.display.list_modes(32)
+		mode = modes[Config.screenMode]
+		self.camera = Camera(Vector2(mode[0], mode[1]))
 		
 		# setup solar system
 		self.sun = Sun()
@@ -88,12 +90,11 @@ class GameScene(Scene):
 		self.currentSelection = 0
 		self.selectionsRects = []
 
-		self.guiImage = pygame.image.load("img/gui.png").convert_alpha()
-		self.guiRect = self.guiImage.get_rect()
 		self.selectSound = pygame.mixer.Sound("sound/select.ogg")
 
 		if savedGame is not None:
 			savedGame.loadTo(self.planets, self.probe, self.aliens)
+			self.update(0)
 			self.paused = True
 
 
@@ -180,13 +181,13 @@ class GameScene(Scene):
 		if self.paused:
 			self.showPauseMenu(screen)
 
-		self.renderObjectDesc(screen)
-		self.renderNearestPlanet(screen, self.camera)
+		self.renderObjectDescGUI(screen)
+		self.renderNearestPlanetGUI(screen, self.camera)
 
 		# level specific
 		self.levelManager.level.render(screen, self.camera)
 
-	def renderNearestPlanet(self, screen, camera):
+	def renderNearestPlanetGUI(self, screen, camera):
 		# GUI - Object desc
 		color = (0,254,253)
 		
@@ -198,7 +199,7 @@ class GameScene(Scene):
 
 		#border
 		descRect = pygame.Rect(headingRect.left, headingRect.bottom + 10, 400, 150)
-		borderRect = descRect
+		borderRect = descRect.copy()
 		borderRect.height = 2
 		pygame.draw.rect(screen, color, borderRect, 0)
 
@@ -206,7 +207,7 @@ class GameScene(Scene):
 		closestPlanet = None
 		closestDistanceSq = 0
 		for planet in self.planets:
-			distanceToPlanetSq = (camera.center - planet.position).magnitude_squared()
+			distanceToPlanetSq = (self.probe.position - planet.position).magnitude_squared()
 			if closestPlanet is None or distanceToPlanetSq < closestDistanceSq:
 				closestPlanet = planet
 				closestDistanceSq = distanceToPlanetSq
@@ -233,23 +234,25 @@ class GameScene(Scene):
 		probeRect.topright = (descRect.right - 10, descRect.top + 10)
 		screen.blit(zoomedImage, probeRect)
 
-	def renderObjectDesc(self, screen):
+	def renderObjectDescGUI(self, screen):
 		# GUI - Object desc
 		color = (0,254,253)
 		windowSize = Vector2(400, 150)
 		
+		# heading
 		guiFont = pygame.font.Font("font/neuropol.ttf", 18)
 		heading = guiFont.render("Object description", True, color)
 		headingRect = pygame.Rect(screen.get_rect().right - 10 - windowSize.x, screen.get_rect().bottom - 200, windowSize.x, 30)
-		# pygame.draw.rect(screen, color, headingRect, 0)
 		screen.blit(heading, (headingRect.left + 10, headingRect.top + 7))
 
 		descRect = pygame.Rect(headingRect.left, headingRect.bottom + 10, windowSize.x, windowSize.y)
-		borderRect = descRect
+
+		# border
+		borderRect = descRect.copy()
 		borderRect.height = 2
-		# pygame.draw.rect(screen, (0,0,0), descRect, 0)
 		pygame.draw.rect(screen, color, borderRect, 0)
 
+		# object descriptions
 		font = pygame.font.Font("font/ethnocentric.ttf", 30)
 		text = font.render("FR-71", True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 10))
@@ -265,6 +268,7 @@ class GameScene(Scene):
 		text = font.render("Speed: " +  str(int(self.probe.speed.magnitude() * 100)) + "/" + str(self.probe.maxSpeed * 100), True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 110))
 
+		# object image
 		originalImage = pygame.image.load("img/rocket4.png").convert_alpha()
 		imageSize = Vector2(173, 291) * 0.5
 		zoomedImage = pygame.transform.smoothscale(originalImage, map(int, (imageSize)))
