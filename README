@@ -1,0 +1,12 @@
+********************************
+ PLANET WARS
+********************************
+
+SYSTEM REQUIREMENTS
+
+- Python >= 2.7.8
+- Pygame >= 1.9.1
+
+INSTALLATION INSTRUCTION
+
+Install the above versions of python and pygame if not already present in your machine.

@@ -7,7 +7,7 @@ from scenes.title.ControlsMenu import *
 class MainMenu(Menu):
 	def __init__(self):
 		super(MainMenu, self).__init__()
-		self.selections = ["NEW GAME", "LOAD GAME", "HIGH SCORES", "OPTIONS", "CONTROLS", "QUIT"]
+		self.selections = ["NEW GAME", "LOAD GAME", "OPTIONS", "CONTROLS", "QUIT"]
 
 	def doSelect(self, index):
 		if index == 0:
@@ -15,13 +15,9 @@ class MainMenu(Menu):
 		elif index == 1:
 			self.manager.goTo(SavedGamesMenu())
 		elif index == 2:
-			s = shelve.open('saved_games.db')
-			s["savedGames"] = []
-			s.close()
-		elif index == 3:
 			self.manager.goTo(OptionsMenu())
-		elif index == 4:
+		elif index == 3:
 			self.manager.goTo(ControlsMenu())
-		elif index == 5:
+		elif index == 4:
 			pygame.quit()
 			sys.exit()

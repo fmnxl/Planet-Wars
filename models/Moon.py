@@ -1,6 +1,7 @@
 import math, pygame, pygame.gfxdraw, random
 from lib.euclid import *
 from models.HeavenlyBody import HeavenlyBody
+from config.Config import *
 
 class Moon(HeavenlyBody):
 	def __init__(self, size, mass, distance, period, imageFile, centerObject, angleToCenter):
@@ -17,7 +18,7 @@ class Moon(HeavenlyBody):
 		self.imageSize = Vector2(size*2, size*2)
 		self.zoom = 0
 		self.minZoom = 10
-		self.originalImage = pygame.image.load(imageFile).convert_alpha()
+		self.originalImage = pygame.image.load(Config.getFile(imageFile)).convert_alpha()
 		self.tempImage = pygame.transform.smoothscale(self.originalImage, map(int, (self.imageSize * self.zoom)))
 		self.rect = self.tempImage.get_rect()
 

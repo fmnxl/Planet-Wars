@@ -42,7 +42,7 @@ class TitleScene(Scene):
 			pygame.gfxdraw.pixel(screen, position[0], position[1], (randomVal,randomVal,randomVal))
 
 		# Render Game title
-		titleFont = pygame.font.Font("font/ethnocentric.ttf", 80)
+		titleFont = pygame.font.Font(Config.getFile(Config.ethnocentric), 80)
 		titleText = titleFont.render("PLANET WARS", True, (255,255,255))
 		titleTextRect = titleText.get_rect()
 		titleTextRect.centerx = screen.get_rect().centerx
@@ -54,7 +54,7 @@ class TitleScene(Scene):
 
 	# proceed to game scene - called by a menu
 	def goToGameScene(self, savedGame = None):
-		self.manager.go_to(GameScene(savedGame))
+		self.manager.goTo(GameScene(savedGame))
 
 	def handleEvents(self, events, keys):
 		self.menuManager.menu.handleEvents(events, keys)

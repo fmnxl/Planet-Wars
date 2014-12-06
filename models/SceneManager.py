@@ -1,7 +1,7 @@
 class SceneMananger(object):
     def __init__(self, initialScene):
-        self.go_to(initialScene)
+        self.goTo(initialScene)
 
-    def go_to(self, scene):
+    def goTo(self, scene):
         self.scene = scene
         self.scene.manager = self

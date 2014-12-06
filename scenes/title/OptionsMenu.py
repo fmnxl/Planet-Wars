@@ -46,7 +46,7 @@ class OptionsMenu(Menu):
 	def render(self, screen):
 		selectionsTexts = []
 		selectionsRects = []
-		menuFont = pygame.font.Font("font/ethnocentric.ttf", 40)
+		menuFont = pygame.font.Font(Config.getFile(Config.ethnocentric), 40)
 
 		for i, selection in enumerate(self.selections):
 			text = menuFont.render(selection, True, (255,255,255))

@@ -3,7 +3,8 @@ from pygame.locals import *
 from lib.euclid import *
 from config.Config import *
 from scenes.Scene import *
-from scenes.GameOverScene import GameOverScene
+from scenes.GameOverScene import *
+from scenes.WinScene import *
 from models.Alien import *
 from models.Camera import *
 from models.Planet import *
@@ -16,7 +17,9 @@ from models.LevelManager import *
 from scenes.levels.Level1 import *
 from models.SavedGame import *
 
-
+# --------------------------------------------------
+# This class handles gameplay and the solar system
+# --------------------------------------------------
 
 class GameScene(Scene):
 	def __init__(self, savedGame = None):
@@ -51,10 +54,10 @@ class GameScene(Scene):
 		mars.moons.append(deimos)
 
 		#jupiter
-		europa 		= Moon(		0.2, 	100, 	25.0, 	60, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
-		io 			= Moon(		0.2, 	100, 	20.0, 	80, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
-		ganymede 	= Moon(		0.2, 	100, 	25.0, 	100, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
-		callisto 	= Moon(		0.2, 	100, 	30.0, 	120, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
+		europa 		= Moon(		0.2, 	100, 	20.0, 	60, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
+		io 			= Moon(		0.2, 	100, 	25.0, 	80, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
+		ganymede 	= Moon(		0.2, 	100, 	30.0, 	100, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
+		callisto 	= Moon(		0.2, 	100, 	35.0, 	120, 	"img/planets/moon.png", 	jupiter, math.radians(random.randrange(0, 359)))
 		jupiter.moons.append(europa)
 		jupiter.moons.append(io)
 		jupiter.moons.append(ganymede)
@@ -69,15 +72,8 @@ class GameScene(Scene):
 			size = random.randrange(4, 15) / 10.0
 			self.asteroids.append(Asteroid(	size, 	1, 	random.randrange(400,600), 	random.randrange(100, 300), (100, 100, 100), 	self.sun, math.radians(random.randrange(0, 359))))
 
-		# asteroids
-		# for i in range(0, 80):
-		# 	size = random.randrange(1, 3) / 10.0
-		# 	self.planets.append(Asteroid(	size, 	1, 	random.randrange(10,15), 	random.randrange(100, 300), (100, 100, 100), 	saturn, math.radians(random.randrange(0, 359))))
-
 		self.probe = Probe(earth.position + Vector2(20,0), Vector2(0,0))
 		self.aliens = []
-
-		earth.setZone(8, 10, 10, self.probe)
 
 		self.levelManager = LevelManager(Level1(), self.planets, self.probe, self.aliens)
 
@@ -124,7 +120,7 @@ class GameScene(Scene):
 		self.sun.attract(self.probe)
 		self.sun.attractMulti(self.aliens)
 		if self.sun.checkCollision(self.probe):
-			self.manager.go_to(GameOverScene(self.levelManager.lastCheckpoint, "YOU CRASHED INTO THE SUN"))
+			self.manager.goTo(GameOverScene("YOU CRASHED INTO THE SUN"))
 			return
 
 		# planets
@@ -132,15 +128,29 @@ class GameScene(Scene):
 			planet.attract(self.probe)
 			planet.attractMulti(self.aliens)
 			if planet.checkCollision(self.probe):
-				self.manager.go_to(GameOverScene(self.levelManager.lastCheckpoint, "YOU CRASHED"))
+				self.manager.goTo(GameOverScene("YOU CRASHED"))
 				return
+
+		planetsWithoutHuman = [p for p in self.planets if p.zoneRadius == 0]
+		if len(planetsWithoutHuman) == 0:
+			self.manager.goTo(WinScene())
+			return
+
+		# asteroids
+		for asteroid in self.asteroids:
+			if asteroid.checkCollision(self.probe):
+				self.manager.goTo(GameOverScene("YOU CRASHED"))
 
 		# probe
 		self.probe.checkBulletHit(self.aliens, self.camera)
-		if self.probe.shouldDie():
-			self.manager.go_to(GameOverScene(self.levelManager.lastCheckpoint))
+		if self.probe.health <= 0:
+			self.manager.goTo(GameOverScene("THE ALIENS HAS DESTROYED YOU"))
+			return
+		if self.probe.fuel <= 0:
+			self.manager.goTo(GameOverScene("YOU RAN OUT OF FUEL"))
 			return
 		
+		# aliens
 		for alien in self.aliens:
 			alien.checkBulletHit(self.probe, self.camera)
 			if alien.health <= 0:
@@ -192,7 +202,7 @@ class GameScene(Scene):
 		color = (0,254,253)
 		
 		# heading
-		guiFont = pygame.font.Font("font/neuropol.ttf", 18)
+		guiFont = pygame.font.Font(Config.getFile(Config.neuropol), 18)
 		heading = guiFont.render("Nearest Planet", True, color)
 		headingRect = pygame.Rect(screen.get_rect().left + 10, screen.get_rect().bottom - 200, 400, 30)
 		screen.blit(heading, (headingRect.left + 10, headingRect.top + 7))
@@ -212,11 +222,11 @@ class GameScene(Scene):
 				closestPlanet = planet
 				closestDistanceSq = distanceToPlanetSq
 
-		font = pygame.font.Font("font/ethnocentric.ttf", 30)
+		font = pygame.font.Font(Config.getFile(Config.ethnocentric), 30)
 		text = font.render(closestPlanet.name, True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 10))
 
-		font = pygame.font.Font("font/neuropol.ttf", 17)
+		font = pygame.font.Font(Config.getFile(Config.neuropol), 17)
 
 		text = font.render("Distance : " + str(int(math.sqrt(closestDistanceSq))), True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 60))
@@ -240,7 +250,7 @@ class GameScene(Scene):
 		windowSize = Vector2(400, 150)
 		
 		# heading
-		guiFont = pygame.font.Font("font/neuropol.ttf", 18)
+		guiFont = pygame.font.Font(Config.getFile(Config.neuropol), 18)
 		heading = guiFont.render("Object description", True, color)
 		headingRect = pygame.Rect(screen.get_rect().right - 10 - windowSize.x, screen.get_rect().bottom - 200, windowSize.x, 30)
 		screen.blit(heading, (headingRect.left + 10, headingRect.top + 7))
@@ -253,11 +263,11 @@ class GameScene(Scene):
 		pygame.draw.rect(screen, color, borderRect, 0)
 
 		# object descriptions
-		font = pygame.font.Font("font/ethnocentric.ttf", 30)
+		font = pygame.font.Font(Config.getFile(Config.ethnocentric), 30)
 		text = font.render("FR-71", True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 10))
 
-		font = pygame.font.Font("font/neuropol.ttf", 17)
+		font = pygame.font.Font(Config.getFile(Config.neuropol), 17)
 
 		text = font.render("Health : " + str(self.probe.health) + "/" + str(self.probe.maxHealth), True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 60))
@@ -269,7 +279,7 @@ class GameScene(Scene):
 		screen.blit(text, (descRect.left + 10, descRect.top + 110))
 
 		# object image
-		originalImage = pygame.image.load("img/rocket4.png").convert_alpha()
+		originalImage = pygame.image.load(Config.getFile("img/rocket4.png")).convert_alpha()
 		imageSize = Vector2(173, 291) * 0.5
 		zoomedImage = pygame.transform.smoothscale(originalImage, map(int, (imageSize)))
 		probeRect = zoomedImage.get_rect()
@@ -284,7 +294,7 @@ class GameScene(Scene):
 		selectionsTexts = []
 		selectionsRects = []
 
-		menuFont = pygame.font.Font("font/ethnocentric.ttf", 40)
+		menuFont = pygame.font.Font(Config.getFile(Config.ethnocentric), 40)
 		for index, item in enumerate(self.selections):
 			text = menuFont.render(item, True, (255,255,255))
 			textRect = text.get_rect()
@@ -312,7 +322,7 @@ class GameScene(Scene):
 			self.paused = False
 		elif self.currentSelection == 2:
 			from scenes.TitleScene import *
-			self.manager.go_to(TitleScene())
+			self.manager.goTo(TitleScene())
 		elif self.currentSelection == 3:
 			pygame.quit()
 			sys.exit()

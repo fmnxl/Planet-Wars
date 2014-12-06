@@ -20,7 +20,7 @@ manager = SceneMananger(TitleScene())
 # bg music
 pygame.mixer.init()
 pygame.mixer.set_num_channels(8)
-pygame.mixer.music.load(Config.bgMusic)
+pygame.mixer.music.load(Config.getFile(Config.bgMusic))
 pygame.mixer.music.play(-1)
 
 def main():

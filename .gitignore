@@ -1,0 +1,6 @@
+*.pyc
+models/*.pyc
+config/*.pyc
+scenes/*.pyc
+/build
+/dist

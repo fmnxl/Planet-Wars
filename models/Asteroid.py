@@ -22,8 +22,6 @@ class Asteroid(HeavenlyBody):
 	def blit(self, screen, camera):
 		converted = camera.convertCoordinates(self.position)
 
-		# draw planet
-		#pygame.draw.circle(screen, self.colour, converted, int(round(self.size * camera.zoom)) , 0)
 		try:
 			zoom = int(round(self.size * camera.zoom))
 			if(zoom < 2):

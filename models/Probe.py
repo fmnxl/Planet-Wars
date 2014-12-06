@@ -1,6 +1,7 @@
 import pygame, pygame.mixer
 from lib.euclid import *
 from models.Bullet import *
+from config.Config import *
 
 class Probe(object):
 	def __init__(self, position, speed):
@@ -10,7 +11,7 @@ class Probe(object):
 		self.maxSpeedSquared = self.maxSpeed ** 2
 		self.thrust = 0.025
 		self.fuelEfficiency = 1
-		self.fuelCapacity = 1500.0
+		self.fuelCapacity = 1000.0
 		self.direction = 180
 		self.gravitationalPull = Vector2(0,0)
 		self.directionChange = 0
@@ -19,7 +20,7 @@ class Probe(object):
 		self.imageSize = Vector2(1.73, 2.91) #* 4.0/3.0
 		self.size = 1.0 # for collision purpose
 
-		self.originalImage = pygame.image.load("img/rocket4.png").convert_alpha()
+		self.originalImage = pygame.image.load(Config.getFile("img/rocket4.png")).convert_alpha()
 		self.zoom = 0
 
 		self.zoomedImage = pygame.transform.smoothscale(self.originalImage, map(int, (self.imageSize * self.zoom)))
@@ -66,27 +67,25 @@ class Probe(object):
 		    self.fire()
 
 		if keys[pygame.K_1]:
-		    self.thrust = 0.025 * 1
+		    self.thrust = 0.05 * 1
 		elif keys[pygame.K_2]:
-		    self.thrust = 0.025 * 2
+		    self.thrust = 0.05 * 2
 		elif keys[pygame.K_3]:
-		    self.thrust = 0.025 * 3
+		    self.thrust = 0.05 * 3
 		elif keys[pygame.K_4]:
-		    self.thrust = 0.025 * 4
+		    self.thrust = 0.05 * 4
 		elif keys[pygame.K_5]:
-		    self.thrust = 0.025 * 5
+		    self.thrust = 0.05 * 5
 		elif keys[pygame.K_5]:
-		    self.thrust = 0.025 * 5
+		    self.thrust = 0.05 * 5
 		elif keys[pygame.K_6]:
-		    self.thrust = 0.025 * 6
+		    self.thrust = 0.05 * 6
 		elif keys[pygame.K_7]:
-		    self.thrust = 0.025 * 7
+		    self.thrust = 0.05 * 7
 		elif keys[pygame.K_8]:
-		    self.thrust = 0.025 * 8
+		    self.thrust = 0.05 * 8
 		elif keys[pygame.K_9]:
-		    self.thrust = 0.025 * 9
-		elif keys[pygame.K_0]:
-		    self.thrust = 0.025 * 20
+		    self.thrust = 0.05 * 9
 
 
 	def update(self, deltaTime):
@@ -149,7 +148,7 @@ class Probe(object):
 		healthRect.left = oldLeft
 		pygame.draw.rect(screen, (0,255,0), healthRect, 0)
 
-		font = pygame.font.Font("font/ethnocentric.ttf", int(round(0.4 * camera.zoom)))
+		font = pygame.font.Font(Config.getFile(Config.ethnocentric), int(round(0.4 * camera.zoom)))
 		text = font.render("HP:" + str(self.health), True, (255,255,255))
 		textRect = text.get_rect()
 		textRect.left = healthRect.left
@@ -172,6 +171,3 @@ class Probe(object):
 					self.score += 1
 					alien.alert = True
 					self.bullets.remove(bullet)
-
-	def shouldDie(self):
-		return (self.health <= 0 or self.fuel <= 0)

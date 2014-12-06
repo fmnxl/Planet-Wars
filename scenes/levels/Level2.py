@@ -15,35 +15,28 @@ from scenes.levels.Level import *
 class Level2(Level):
 	def __init__(self):
 		super(Level2, self).__init__()
-		pass
 
 	def initialise(self):
-		mars = self.planets[4]
-		self.aliens.append(Alien(mars.position + Vector2(4,0), Vector2(0, 1.8), self.probe))
-		self.aliens.append(Alien(mars.position + Vector2(8,0), Vector2(0, 1.0), self.probe))
+		planet = random.choice(self.planets)
+		self.aliens.append(Alien(planet.position + Vector2(4,0), Vector2(0, 1.8), self.probe))
+		self.aliens.append(Alien(planet.position + Vector2(8,0), Vector2(0, 1.0), self.probe))
+		self.planetWithAliens = planet
 
 	def render(self, screen, camera):
 		color = (0,254,253)
-		if len(self.aliens) == 0 and self.probe.fuel >= self.probe.fuelCapacity:
-			pass
+		instruction = "Defeat the aliens around " + self.planetWithAliens.name
 
-		elif len(self.aliens) == 0:
-			font = pygame.font.Font("font/ethnocentric.ttf", 20)
-			text = font.render("Now refuel your vehicle", True, color)
-			textRect = text.get_rect()
-			textRect.centerx = screen.get_rect().centerx
-			textRect.top = 20
-			screen.blit(text, textRect)
-		else:
-			font = pygame.font.Font("font/ethnocentric.ttf", 20)
-			text = font.render("Destroy the aliens around mars", True, color)
-			textRect = text.get_rect()
-			textRect.centerx = screen.get_rect().centerx
-			textRect.top = 20
-			screen.blit(text, textRect)
+		font = pygame.font.Font(Config.getFile(Config.ethnocentric), 20)
+		text = font.render(instruction, True, color)
+		textRect = text.get_rect()
+		textRect.centerx = screen.get_rect().centerx
+		textRect.top = 20
+		screen.blit(text, textRect)
 
 	def update(self, deltaTime):
-		pass
+		if len(self.aliens) == 0:
+			self.planetWithAliens.setZone(5, 50, 10, self.probe)
+			self.manager.goTo(Level2())
 
 	def handleEvents(self, events, keys):
 		pass

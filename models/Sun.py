@@ -1,6 +1,7 @@
 import pygame, pygame.gfxdraw
 from lib.euclid import *
 from models.HeavenlyBody import HeavenlyBody
+from config.Config import *
 
 class Sun(HeavenlyBody):
 	def __init__(self):
@@ -10,7 +11,7 @@ class Sun(HeavenlyBody):
 
 		self.imageSize = Vector2(self.size*2, self.size*2)
 		self.zoom = 0
-		self.originalImage = pygame.image.load("img/planets/sun.png").convert_alpha()
+		self.originalImage = pygame.image.load(Config.getFile("img/planets/sun.png")).convert_alpha()
 		self.tempImage = pygame.transform.smoothscale(self.originalImage, map(int, (self.imageSize * self.zoom)))
 		self.rect = self.tempImage.get_rect()
 

@@ -1,11 +1,12 @@
 import pygame, math, random
 from lib.euclid import *
 from models.Bullet import *
+from config.Config import *
 
 class Alien(object):
 	def __init__(self, position, speed, enemy):
-		self.position = position #Vector2(302.2,1)
-		self.speed = speed #Vector2(-0.1,2.08)
+		self.position = position
+		self.speed = speed
 		self.maxSpeed = 30
 		self.maxSpeedSquared = self.maxSpeed ** 2
 		self.thrust = 0.5
@@ -17,14 +18,14 @@ class Alien(object):
 		self.health = self.maxHealth
 
 		self.imageSize = Vector2(2,1)
-		self.originalImage = pygame.image.load("img/ufo.png").convert_alpha()
+		self.originalImage = pygame.image.load(Config.getFile("img/ufo.png")).convert_alpha()
 		self.zoom = 0
 
 		self.fuel = 100
 
 		self.bullets = []
 
-		self.fireRangeRadius = 16
+		self.fireRangeRadius = 20
 		self.detectionRadius = 20
 
 		self.fireTemp = 0
@@ -39,23 +40,27 @@ class Alien(object):
 		self.position += self.speed * deltaTime
 		self.gravitationalPull = Vector2(0,0)
 		self.direction += self.directionChange * deltaTime
-		for bullet in self.bullets:
 
+		# set behaviour towards enemy
+		if self.enemy is not None:
+			self.fireAt(self.enemy)
+			self.chase(self.enemy, deltaTime)
+
+		# check bullets
+		for bullet in self.bullets:
 			bullet.update(deltaTime)
 			if bullet.checkReach() == False:
 				self.bullets.remove(bullet)
 
-		if self.enemy is not None:
-			self.fireAt(self.enemy)
-			self.chase(self.enemy, deltaTime)
-		
 	def blit(self, screen, camera):
+		# zoom image if camera zoom changes
 		if self.zoom != camera.zoom:
 			self.zoomedImage = pygame.transform.scale(self.originalImage, map(int, (self.imageSize * camera.zoom)))
 			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
 			self.rect = self.tempImage.get_rect()
 			self.zoom = camera.zoom
 
+		# rotate image if neccessary
 		if abs(self.directionChange) > 0:
 			oldCenter = self.rect.center
 			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
@@ -63,17 +68,20 @@ class Alien(object):
 			self.rect.center = oldCenter
 			self.directionChange = 0
 
+		# tint red if hit by bullet
 		if self.isHit:
 			self.tempImage.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
 
 		self.rect.center = camera.convertCoordinates(self.position)
 		screen.blit(self.tempImage, self.rect)
 
+		# neutralise image after tinting
 		if self.isHit:
 			self.zoomedImage = pygame.transform.scale(self.originalImage, map(int, (self.imageSize * camera.zoom)))
 			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
 			self.isHit = False
 
+		# health bar above alien
 		maxWidth = 0.02 * camera.zoom  * self.maxHealth
 		healthRect = pygame.Rect((self.rect.topleft), (maxWidth, 2))
 		healthRect.bottom = self.rect.top - 4
@@ -84,7 +92,8 @@ class Alien(object):
 		healthRect.left = oldLeft
 		pygame.draw.rect(screen, (0,255,0), healthRect, 0)
 
-		font = pygame.font.Font("font/ethnocentric.ttf", int(round(0.4 * camera.zoom)))
+		# health number text
+		font = pygame.font.Font(Config.getFile(Config.ethnocentric), int(round(0.4 * camera.zoom)))
 		text = font.render("HP:" + str(self.health), True, (255,255,255))
 		textRect = text.get_rect()
 		textRect.left = healthRect.left

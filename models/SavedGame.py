@@ -6,7 +6,7 @@ from config.Config import *
 class SavedGame(object):
 	@staticmethod
 	def loadAll():
-		db = shelve.open(Config.savedGamesDB)
+		db = shelve.open(Config.getFile(Config.savedGamesDB))
 		savedGames = db["savedGames"]
 		db.close()
 		return savedGames
@@ -52,7 +52,7 @@ class SavedGame(object):
 			aliens.append(newAlien)
 
 	def save(self):
-		s = shelve.open(Config.savedGamesDB)
+		s = shelve.open(Config.getFile(Config.savedGamesDB))
 		appended = s["savedGames"]
 		appended.append(self)
 		s["savedGames"] = appended

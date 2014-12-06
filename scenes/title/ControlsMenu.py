@@ -2,6 +2,7 @@ import pygame, sys
 from scenes.title.Menu import *
 from scenes.title.SavedGamesMenu import *
 from scenes.title.OptionsMenu import *
+from config.Config import *
 
 class ControlsMenu(Menu):
 	def __init__(self):
@@ -14,7 +15,8 @@ class ControlsMenu(Menu):
 			"A  MOVE LEFT",
 			"D  MOVE RIGHT",
 			"Q  ROTATE ANTICLOCKWISE",
-			"R  ROTATE CLOCKWISE"
+			"R  ROTATE CLOCKWISE",
+			"1-9  THRUST POWER",
 			"SPACE FIRE"
 		]
 		self.controls2 = [
@@ -36,13 +38,13 @@ class ControlsMenu(Menu):
 		super(ControlsMenu, self).render(screen)
 		controlsTexts = []
 		controlsRects = []
-		menuFont = pygame.font.Font("font/ethnocentric.ttf", 15)
+		menuFont = pygame.font.Font(Config.getFile(Config.ethnocentric), 15)
 
 		for i, control in enumerate(self.controls1):
 			text = menuFont.render(control, True, (255,255,255))
 			textRect = text.get_rect()
 			textRect.centerx = screen.get_rect().width / 4
-			textRect.y = 250 + i * 60
+			textRect.y = 250 + i * 30
 			controlsTexts.append(text)
 			controlsRects.append(textRect)
 
@@ -50,7 +52,7 @@ class ControlsMenu(Menu):
 			text = menuFont.render(control, True, (255,255,255))
 			textRect = text.get_rect()
 			textRect.centerx = screen.get_rect().width / 4 * 3
-			textRect.y = 250 + i * 60
+			textRect.y = 250 + i * 30
 			controlsTexts.append(text)
 			controlsRects.append(textRect)
 

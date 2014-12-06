@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from config.Config import *
 
 class Menu(object):
 	def __init__(self):
@@ -46,7 +47,7 @@ class Menu(object):
 	def render(self, screen):
 		selectionsTexts = []
 		selectionsRects = []
-		menuFont = pygame.font.Font("font/ethnocentric.ttf", 40)
+		menuFont = pygame.font.Font(Config.getFile(Config.ethnocentric), 40)
 
 		for i, selection in enumerate(self.selections):
 			text = menuFont.render(selection, True, (255,255,255))

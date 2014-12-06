@@ -1,6 +1,7 @@
 import math, pygame, pygame.gfxdraw, random
 from lib.euclid import *
 from models.HeavenlyBody import HeavenlyBody
+from config.Config import *
 
 class Planet(HeavenlyBody):
 	def __init__(self, name, size, mass, distance, period, imageFile, centerObject, angleToCenter):
@@ -15,10 +16,10 @@ class Planet(HeavenlyBody):
 		self.angleToCenter = angleToCenter
 
 		# images
-		self.imageSize = Vector2(size*2, size*2)
+		self.imageSize = Vector2(size, size) * 2
 		self.zoom = 0
 		self.minZoom = 10
-		self.originalImage = pygame.image.load(imageFile).convert_alpha()
+		self.originalImage = pygame.image.load(Config.getFile(imageFile)).convert_alpha()
 		self.tempImage = pygame.transform.smoothscale(self.originalImage, map(int, (self.imageSize * self.zoom)))
 		self.rect = self.tempImage.get_rect()
 
@@ -34,7 +35,7 @@ class Planet(HeavenlyBody):
 		self.update(0) # to calculate initial position
 
 	def setZone(self, radius, fuelingRate, healingRate, objectToHealOrFuel):
-		self.zoneRadius = radius
+		self.zoneRadius = radius + self.size
 		self.fuelingRate = fuelingRate
 		self.healingRate = healingRate
 		self.objectToHealOrFuel = objectToHealOrFuel
@@ -65,23 +66,13 @@ class Planet(HeavenlyBody):
 
 		# draw healing / fueling radius
 		if self.zoneRadius > 0:
-			#pygame.draw.circle(screen, (50,255,50), converted, int(round(self.fuelingRadius * camera.zoom)) , 0)
 			try:
 				pygame.gfxdraw.aacircle(screen, converted.x, converted.y, int(round(self.zoneRadius * camera.zoom)), (50,255,50, 50))
 				pygame.gfxdraw.filled_circle(screen, converted.x, converted.y, int(round(self.zoneRadius * camera.zoom)), (50,255,50, 50))	
 			except:
 				pass
 
-		# draw planet
-		#pygame.draw.circle(screen, self.colour, converted, int(round(self.size * camera.zoom)) , 0)
-		# try:
-		# 	zoom = int(round(self.size * camera.zoom))
-		# 	if(zoom < 4):
-		# 		zoom = 4
-		# 	pygame.gfxdraw.aacircle(screen, converted.x, converted.y, zoom, self.colour)
-		# 	pygame.gfxdraw.filled_circle(screen, converted.x, converted.y, zoom, self.colour)	
-		# except:
-		# 	pass
+		# redraw planet if zoom changes
 		if self.zoom != camera.zoom:
 			zoom = map(int, map(round, self.imageSize * camera.zoom))
 			

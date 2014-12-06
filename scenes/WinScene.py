@@ -3,33 +3,20 @@ from pygame.locals import *
 from scenes.Scene import Scene
 from config.Config import *
 
-class GameOverScene(Scene):
-	def __init__(self, message = None):
-		super(GameOverScene, self).__init__()
+class WinScene(Scene):
+	def __init__(self):
+		super(WinScene, self).__init__()
 		self.rendered = False
-		self.message = message
 
 	def render(self, screen):
-		# screen.fill((0, 0, 0))
 		if self.rendered:
 			return
 
 		font = pygame.font.Font(Config.getFile(Config.ethnocentric), 50)
-		text = font.render("GAME OVER", True, (255,255,255))
+		text = font.render("YOU WON", True, (255,255,255))
 		textRect = text.get_rect()
 		textRect.center = screen.get_rect().center
 		screen.blit(text, textRect)
-
-		y = 70
-
-		if self.message is not None:
-			font = pygame.font.Font(Config.getFile(Config.ethnocentric), 20)
-			text = font.render(self.message, True, (255,255,255))
-			textRect = text.get_rect()
-			textRect.center = screen.get_rect().center
-			textRect.y += y
-			screen.blit(text, textRect)
-			y += 65
 
 		font = pygame.font.Font(Config.getFile(Config.ethnocentric), 20)
 		text = font.render("PRESS ANY KEY TO CONTINUE", True, (255,255,255))

@@ -3,7 +3,7 @@ class LevelManager(object):
 		self.planets = planets
 		self.probe = probe
 		self.aliens = aliens
-		self.lastCheckpoint = None
+		self.levelNum = 1
 		self.goTo(initialLevel)
 
 	def goTo(self, level):
