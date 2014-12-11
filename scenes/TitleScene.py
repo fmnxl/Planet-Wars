@@ -1,11 +1,12 @@
-import pygame, random, pygame.gfxdraw, sys, shelve
+import pygame, random, pygame.mixer, pygame.gfxdraw, sys, shelve
 from pygame.locals import *
-from lib.euclid import *
-from config.Config import *
+from lib.euclid import Vector2
+from config.Config import Config
 from scenes.Scene import Scene
 from scenes.GameScene import GameScene
-from models.SavedGame import *
-from scenes.title.MainMenu import *
+from scenes.IntroScene import IntroScene
+from models.SavedGame import SavedGame
+from scenes.title.MainMenu import MainMenu
 
 class MenuManager(object):
 	def __init__(self, initialMenu, scene):
@@ -23,10 +24,14 @@ class TitleScene(Scene):
 		# generate bg stars
 		self.bgStars = []
 		for i in range(0, 100):
-			self.bgStars.append(Vector2(random.randrange(0, Config.screenWidth), random.randrange(0, Config.screenHeight)))
+			self.bgStars.append(Vector2(random.randrange(0, Config.getScreenSize()[0]), random.randrange(0, Config.getScreenSize()[1])))
 
 		# menu manager
 		self.menuManager = MenuManager(MainMenu(), self)
+
+		# bg music
+		pygame.mixer.music.load(Config.getFile(Config.titleBgMusic))
+		pygame.mixer.music.play(-1) # loop forever
 		
 	def update(self, deltaTime):
 		pass
@@ -54,7 +59,12 @@ class TitleScene(Scene):
 
 	# proceed to game scene - called by a menu
 	def goToGameScene(self, savedGame = None):
-		self.manager.goTo(GameScene(savedGame))
+		pygame.mixer.music.fadeout(500)
+
+		if savedGame is None:
+			self.manager.goTo(IntroScene())
+		else:
+			self.manager.goTo(GameScene(savedGame))
 
 	def handleEvents(self, events, keys):
 		self.menuManager.menu.handleEvents(events, keys)

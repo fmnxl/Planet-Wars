@@ -22,7 +22,7 @@ class WinScene(Scene):
 		text = font.render("PRESS ANY KEY TO CONTINUE", True, (255,255,255))
 		textRect = text.get_rect()
 		textRect.center = screen.get_rect().center
-		textRect.y += y
+		textRect.y += 70
 		screen.blit(text, textRect)
 
 		pygame.display.flip()

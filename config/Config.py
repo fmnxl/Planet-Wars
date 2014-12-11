@@ -1,26 +1,28 @@
-import pygame, sys, os
+import pygame, sys, os, shelve
 
 class Config():
+	
+
 	# environment variable
-	development = False
+	development = True
 	env = "DEVELOPMENT" if development else "PRODUCTION"
 	
 	# display
-	screenWidth = 0
-	screenHeight = 0
-	screenMode = 4
-	flags = pygame.DOUBLEBUF | pygame.HWSURFACE # | pygame.FULLSCREEN
+	screenMode = 0
+	flags = 0 # pygame.DOUBLEBUF | pygame.HWSURFACE # | pygame.FULLSCREEN
 	fullscreen = True
 
 	caption = "Planet Wars"
 	
-	bgMusic = "sound/bg.ogg"
+	titleBgMusic = "sound/imperial-march.ogg"
+	introBgMusic = "sound/title.ogg"
 	savedGamesDB = "saved_games.db"
 	ethnocentric = "font/ethnocentric.ttf"
 	neuropol = "font/neuropol.ttf"
 	fps = 40
 
 
+	# for PyInstaller
 	@classmethod
 	def getFile(cls, filePath):
 		if cls.env == "PRODUCTION":
@@ -35,3 +37,35 @@ class Config():
 		if cls.fullscreen:
 			flags |= pygame.FULLSCREEN
 		return flags
+
+	@classmethod
+	def getScreenSize(cls):
+		modes = pygame.display.list_modes(32)
+		return modes[cls.screenMode]
+
+	@classmethod
+	def load(cls):
+		db = shelve.open("config.db")
+		
+		# if doesn't exist, then initialise
+		try:
+			config = db["config"]
+		except:
+			config = {}
+			config["fullscreen"] = cls.fullscreen
+			config["screenMode"] = cls.screenMode
+			db["config"] = config
+
+		cls.fullscreen = config["fullscreen"]
+		cls.screenMode = config["screenMode"]
+		db.close()
+
+
+	@classmethod
+	def save(cls):
+		db = shelve.open("config.db")
+		config = db["config"]
+		config["fullscreen"] = cls.fullscreen
+		config["screenMode"] = cls.screenMode
+		db["config"] = config
+		db.close()

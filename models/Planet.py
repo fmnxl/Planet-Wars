@@ -30,7 +30,6 @@ class Planet(HeavenlyBody):
 		self.objectToHealOrFuel = None
 
 		self.moons = []
-		self.mines = []
 
 		self.update(0) # to calculate initial position
 
@@ -53,10 +52,7 @@ class Planet(HeavenlyBody):
 		for moon in self.moons:
 			moon.update(deltaTime)
 
-		for mine in self.mines:
-			mine.update(deltaTime)
-
-	def blit(self, screen, camera):
+	def render(self, screen, camera):
 		# draw orbital path if zoom is not too large
 		if(camera.zoom <= 35.0):
 			converted = camera.convertCoordinates(self.centerObject.position)
@@ -91,9 +87,6 @@ class Planet(HeavenlyBody):
 
 		for moon in self.moons:
 			moon.blit(screen, camera)
-
-		for mine in self.mines:
-			mine.blit(screen, camera)
 
 	def healOrFuel(self, object, deltaTime):
 		# validation: has to be within zone

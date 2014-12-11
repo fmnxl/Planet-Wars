@@ -1,5 +1,5 @@
 import pygame
-from lib.euclid import *
+from lib.euclid import Vector2
 
 class Camera(object):
 	def __init__(self, screenSize):
@@ -46,7 +46,7 @@ class Camera(object):
 		v = coordinates - self.center * z + self.screenSize / 2
 		return v
 
-	def listenToKeyboard(self, keys, events):
+	def handleEvents(self, events, keys):
 		for event in events:
 			# toggle camera lock on probe
 			if event.type == pygame.KEYDOWN and event.key == pygame.K_f:

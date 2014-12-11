@@ -19,7 +19,7 @@ class Asteroid(HeavenlyBody):
 		unitVector = Vector2(math.cos(self.angleToCenter), math.sin(self.angleToCenter))
 		self.position = self.centerObject.position + self.distance * unitVector
 
-	def blit(self, screen, camera):
+	def render(self, screen, camera):
 		converted = camera.convertCoordinates(self.position)
 
 		try:

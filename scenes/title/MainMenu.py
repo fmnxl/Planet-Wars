@@ -1,8 +1,8 @@
 import pygame, sys
-from scenes.title.Menu import *
-from scenes.title.SavedGamesMenu import *
-from scenes.title.OptionsMenu import *
-from scenes.title.ControlsMenu import *
+from scenes.title.Menu import Menu
+from scenes.title.SavedGamesMenu import SavedGamesMenu
+from scenes.title.OptionsMenu import OptionsMenu
+from scenes.title.ControlsMenu import ControlsMenu
 
 class MainMenu(Menu):
 	def __init__(self):

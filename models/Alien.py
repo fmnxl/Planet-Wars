@@ -1,107 +1,33 @@
 import pygame, math, random
 from lib.euclid import *
-from models.Bullet import *
-from config.Config import *
+from models.Bullet import Bullet
+from config.Config import Config
+from models.Vehicle import Vehicle
 
-class Alien(object):
+class Alien(Vehicle):
 	def __init__(self, position, speed, enemy):
-		self.position = position
-		self.speed = speed
-		self.maxSpeed = 30
-		self.maxSpeedSquared = self.maxSpeed ** 2
-		self.thrust = 0.5
-		self.fuelEfficiency = 0.1
-		self.direction = 0
-		self.gravitationalPull = Vector2(0,0)
-		self.directionChange = 0
-		self.maxHealth = 100
-		self.health = self.maxHealth
-
-		self.imageSize = Vector2(2,1)
-		self.originalImage = pygame.image.load(Config.getFile("img/ufo.png")).convert_alpha()
-		self.zoom = 0
-
-		self.fuel = 100
-
-		self.bullets = []
+		super(Alien, self).__init__(position, speed, 0, Vector2(2,1), 1.0, "img/ufo.png", 100, 100, 0.5)
 
 		self.fireRangeRadius = 20
 		self.detectionRadius = 20
 
 		self.fireTemp = 0
-		self.isHit = False
 
 		self.enemy = enemy
 		self.alert = False
 
 	def update(self, deltaTime):
-		# deltaTimeSmall = deltaTime
-		self.speed += self.gravitationalPull * deltaTime
-		self.position += self.speed * deltaTime
-		self.gravitationalPull = Vector2(0,0)
-		self.direction += self.directionChange * deltaTime
-
+		super(Alien, self).update(deltaTime)
+		
 		# set behaviour towards enemy
 		if self.enemy is not None:
 			self.fireAt(self.enemy)
 			self.chase(self.enemy, deltaTime)
 
-		# check bullets
-		for bullet in self.bullets:
-			bullet.update(deltaTime)
-			if bullet.checkReach() == False:
-				self.bullets.remove(bullet)
 
-	def blit(self, screen, camera):
-		# zoom image if camera zoom changes
-		if self.zoom != camera.zoom:
-			self.zoomedImage = pygame.transform.scale(self.originalImage, map(int, (self.imageSize * camera.zoom)))
-			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
-			self.rect = self.tempImage.get_rect()
-			self.zoom = camera.zoom
-
-		# rotate image if neccessary
-		if abs(self.directionChange) > 0:
-			oldCenter = self.rect.center
-			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
-			self.rect = self.tempImage.get_rect()
-			self.rect.center = oldCenter
-			self.directionChange = 0
-
-		# tint red if hit by bullet
-		if self.isHit:
-			self.tempImage.fill((255,0,0), special_flags=pygame.BLEND_RGBA_MULT)
-
-		self.rect.center = camera.convertCoordinates(self.position)
-		screen.blit(self.tempImage, self.rect)
-
-		# neutralise image after tinting
-		if self.isHit:
-			self.zoomedImage = pygame.transform.scale(self.originalImage, map(int, (self.imageSize * camera.zoom)))
-			self.tempImage = pygame.transform.rotate(self.zoomedImage, self.direction)
-			self.isHit = False
-
-		# health bar above alien
-		maxWidth = 0.02 * camera.zoom  * self.maxHealth
-		healthRect = pygame.Rect((self.rect.topleft), (maxWidth, 2))
-		healthRect.bottom = self.rect.top - 4
-		healthRect.centerx = self.rect.centerx
-		oldLeft = healthRect.left
-
-		healthRect.width = maxWidth * self.health / self.maxHealth
-		healthRect.left = oldLeft
-		pygame.draw.rect(screen, (0,255,0), healthRect, 0)
-
-		# health number text
-		font = pygame.font.Font(Config.getFile(Config.ethnocentric), int(round(0.4 * camera.zoom)))
-		text = font.render("HP:" + str(self.health), True, (255,255,255))
-		textRect = text.get_rect()
-		textRect.left = healthRect.left
-		textRect.bottom = healthRect.top - 1
-		screen.blit(text, textRect)
-
-		for bullet in self.bullets:
-			bullet.blit(screen, camera)
+	def render(self, screen, camera):
+		super(Alien, self).render(screen, camera)
+		
 
 	def fireAt(self, enemy):
 		self.fireTemp += 1

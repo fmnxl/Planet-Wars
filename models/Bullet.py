@@ -7,9 +7,14 @@ class Bullet(object):
 		self.position = position
 		self.originalPosition = position
 		self.initialSpeed = initialSpeed
-		self.reachSqauared = reach ** 2
-		self.speed = 20.0
-		self.damage = 1
+		self.reachSqauared = reach ** 2 # for faster comparison
+		
+		# constants
+		self.speed = 10.0
+		self.damage = 2
+		self.colour = (255,0,0)
+
+		# play bullet sound
 		beep = pygame.mixer.Sound("sound/bullet.ogg")
 		beep.play()
 
@@ -22,7 +27,7 @@ class Bullet(object):
 
 	def blit(self, screen, camera):
 		bulletCoordinate = camera.convertCoordinates(self.position)
-		pygame.draw.circle(screen, (255,255,255), map(int, bulletCoordinate), int(round(0.07* camera.zoom)) , 0)
+		pygame.draw.circle(screen, self.colour, map(int, bulletCoordinate), int(round(0.07* camera.zoom)) , 0)
 
 	def checkHit(self, other, camera):
 		if other.rect.collidepoint(camera.convertCoordinates(self.position)):

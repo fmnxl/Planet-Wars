@@ -1,8 +1,8 @@
 import pygame, sys
-from scenes.title.Menu import *
-from scenes.title.SavedGamesMenu import *
-from scenes.title.OptionsMenu import *
-from config.Config import *
+from scenes.title.Menu import Menu
+from scenes.title.SavedGamesMenu import SavedGamesMenu
+from scenes.title.OptionsMenu import OptionsMenu
+from config.Config import Config
 
 class ControlsMenu(Menu):
 	def __init__(self):
@@ -10,23 +10,23 @@ class ControlsMenu(Menu):
 		self.selections = ["BACK"]
 
 		self.controls1 = [
-			"W  MOVE FORWARD",
-			"S  MOVE BACKWARD",
-			"A  MOVE LEFT",
-			"D  MOVE RIGHT",
-			"Q  ROTATE ANTICLOCKWISE",
-			"R  ROTATE CLOCKWISE",
-			"1-9  THRUST POWER",
-			"SPACE FIRE"
+			"W - MOVE FORWARD",
+			"S - MOVE BACKWARD",
+			"A - MOVE LEFT",
+			"D - MOVE RIGHT",
+			"Q - ROTATE ANTICLOCKWISE",
+			"R - ROTATE CLOCKWISE",
+			"1-9 - THRUST POWER",
+			"SPACE - FIRE"
 		]
 		self.controls2 = [
-			"-  ZOOM OUT",
-			"+  ZOOM IN",
-			"F  TOGGLE CAMERA LOCK",
-			"UP  MOVE CAMERA UP",
-			"DOWN  MOVE CAMERA DOWN",
-			"LEFT  MOVE CAMERA LEFT",
-			"RIGHT  MOVE CAMERA RIGHT",
+			"- - ZOOM OUT",
+			"+ - ZOOM IN",
+			"F - TOGGLE CAMERA LOCK",
+			"UP - MOVE CAMERA UP",
+			"DOWN - MOVE CAMERA DOWN",
+			"LEFT - MOVE CAMERA LEFT",
+			"RIGHT - MOVE CAMERA RIGHT",
 		]
 
 	def doSelect(self, index):

@@ -1,8 +1,8 @@
 import pygame, sys
 from pygame.locals import *
-from config.Config import *
-from scenes.title.Menu import *
-from scenes.title.SavedGamesMenu import *
+from config.Config import Config
+from scenes.title.Menu import Menu
+from scenes.title.SavedGamesMenu import SavedGamesMenu
 
 class OptionsMenu(Menu):
 	def __init__(self):
@@ -15,7 +15,7 @@ class OptionsMenu(Menu):
 	def doSelect(self, index):
 		if index == 0:
 			pygame.display.set_mode(self.modes[Config.screenMode], Config.getScreenFlags())
-			from scenes.title.MainMenu import *
+			from scenes.title.MainMenu import MainMenu
 			self.manager.goTo(MainMenu())
 
 	def changeSettings(self, index, left):
@@ -28,6 +28,7 @@ class OptionsMenu(Menu):
 		elif index == 2:
 			Config.fullscreen = not Config.fullscreen
 
+		Config.save()
 
 	def handleEvents(self, events, keys):
 		super(OptionsMenu, self).handleEvents(events, keys)

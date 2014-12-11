@@ -7,7 +7,7 @@ a = Analysis(['planet-wars.py'],
 pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
-          exclude_binaries=True,
+          exclude_binaries=False,
           name='Planet Wars',
           debug=False,
           strip=None,
@@ -27,4 +27,4 @@ coll = COLLECT(exe,
                a.datas,
                strip=None,
                upx=True,
-               name='Planet Wars')
+               name='planet-wars')

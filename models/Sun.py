@@ -1,7 +1,7 @@
 import pygame, pygame.gfxdraw
-from lib.euclid import *
+from lib.euclid import Vector2
 from models.HeavenlyBody import HeavenlyBody
-from config.Config import *
+from config.Config import Config
 
 class Sun(HeavenlyBody):
 	def __init__(self):
@@ -15,7 +15,7 @@ class Sun(HeavenlyBody):
 		self.tempImage = pygame.transform.smoothscale(self.originalImage, map(int, (self.imageSize * self.zoom)))
 		self.rect = self.tempImage.get_rect()
 
-	def blit(self, screen, camera):
+	def render(self, screen, camera):
 		v = camera.convertCoordinates(self.position)
 		# pygame.draw.circle(screen, (255,255,0), v, int(self.size * camera.zoom), 0)
 		# try:

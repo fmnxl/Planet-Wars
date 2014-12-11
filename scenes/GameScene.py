@@ -1,21 +1,19 @@
 import pygame, math, random, pygame.gfxdraw, sys
-from pygame.locals import *
-from lib.euclid import *
-from config.Config import *
-from scenes.Scene import *
-from scenes.GameOverScene import *
-from scenes.WinScene import *
-from models.Alien import *
-from models.Camera import *
-from models.Planet import *
-from models.Moon import *
-from models.Asteroid import *
-from models.Probe import *
-from models.Sun import *
-
-from models.LevelManager import *
-from scenes.levels.Level1 import *
-from models.SavedGame import *
+from lib.euclid import Vector2
+from config.Config import Config
+from scenes.Scene import Scene
+from scenes.GameOverScene import GameOverScene
+from scenes.WinScene import WinScene
+from models.Alien import Alien
+from models.Camera import Camera
+from models.Planet import Planet
+from models.Moon import Moon
+from models.Asteroid import Asteroid
+from models.Probe import Probe
+from models.Sun import Sun
+from models.LevelManager import LevelManager
+from scenes.levels.Level1 import Level1
+from models.SavedGame import SavedGame
 
 # --------------------------------------------------
 # This class handles gameplay and the solar system
@@ -28,13 +26,12 @@ class GameScene(Scene):
 		self.level = 1
 		self.paused = False
 
-		modes = pygame.display.list_modes(32)
-		mode = modes[Config.screenMode]
-		self.camera = Camera(Vector2(mode[0], mode[1]))
+		screenSize = Config.getScreenSize()
+		self.camera = Camera(Vector2(screenSize[0], screenSize[1]))
 		
 		# setup solar system
 		self.sun = Sun()
-		#					size	mass	dist	year	colour						center
+		#							size	mass	dist	year	colour						center
 		mercury = Planet("Mercury",	0.383, 	3200, 	57.0, 	900, 	"img/planets/mercury.png", 	self.sun, math.radians(random.randrange(0, 359)))
 		venus 	= Planet("Venus",	0.95, 	3200, 	108.0, 	2000, 	"img/planets/venus.png", 	self.sun, math.radians(random.randrange(0, 359)))
 		earth 	= Planet("Earth",	1.0, 	3200, 	150.0, 	3650, 	"img/planets/earth.png", 	self.sun, math.radians(random.randrange(0, 359)))
@@ -72,27 +69,28 @@ class GameScene(Scene):
 			size = random.randrange(4, 15) / 10.0
 			self.asteroids.append(Asteroid(	size, 	1, 	random.randrange(400,600), 	random.randrange(100, 300), (100, 100, 100), 	self.sun, math.radians(random.randrange(0, 359))))
 
+		# setup pointer to probe and aliens
 		self.probe = Probe(earth.position + Vector2(20,0), Vector2(0,0))
 		self.aliens = []
 
-		self.levelManager = LevelManager(Level1(), self.planets, self.probe, self.aliens)
-
-
+		# stars
 		self.bgStars = []
 		for i in range(0, 200):
-			self.bgStars.append(Vector2(random.randrange(-Config.screenWidth/2, Config.screenWidth/2), random.randrange(-Config.screenHeight/2, Config.screenHeight/2)))
+			self.bgStars.append(Vector2(random.randrange(-Config.getScreenSize()[0]/2, Config.getScreenSize()[0]/2), random.randrange(-Config.getScreenSize()[1]/2, Config.getScreenSize()[1]/2)))
+
+		# Level setup and load game if necessary
+		self.levelManager = LevelManager(Level1(), self.planets, self.probe, self.aliens, self)
+		
+		if savedGame is not None:
+			savedGame.load(self.levelManager, self.planets, self.probe, self.aliens)
+			self.update(0)
+			self.paused = True
 
 		# gui
 		self.currentSelection = 0
 		self.selectionsRects = []
 
 		self.selectSound = pygame.mixer.Sound("sound/select.ogg")
-
-		if savedGame is not None:
-			savedGame.loadTo(self.planets, self.probe, self.aliens)
-			self.update(0)
-			self.paused = True
-
 
 
 	def update(self, deltaTime):
@@ -128,18 +126,17 @@ class GameScene(Scene):
 			planet.attract(self.probe)
 			planet.attractMulti(self.aliens)
 			if planet.checkCollision(self.probe):
-				self.manager.goTo(GameOverScene("YOU CRASHED"))
+				self.manager.goTo(GameOverScene("YOU CRASHED INTO " + planet.name))
 				return
-
-		planetsWithoutHuman = [p for p in self.planets if p.zoneRadius == 0]
-		if len(planetsWithoutHuman) == 0:
-			self.manager.goTo(WinScene())
-			return
+			for moon in planet.moons:
+				if moon.checkCollision(self.probe):
+					self.manager.goTo(GameOverScene("YOU CRASHED"))
+					return
 
 		# asteroids
 		for asteroid in self.asteroids:
 			if asteroid.checkCollision(self.probe):
-				self.manager.goTo(GameOverScene("YOU CRASHED"))
+				self.manager.goTo(GameOverScene("YOU CRASHED INTO AN ASTEROID"))
 
 		# probe
 		self.probe.checkBulletHit(self.aliens, self.camera)
@@ -170,22 +167,22 @@ class GameScene(Scene):
 			pygame.gfxdraw.pixel(screen, position[0], position[1], (randomVal,randomVal,randomVal))
 
 		# sun
-		self.sun.blit(screen, self.camera)
+		self.sun.render(screen, self.camera)
 
 		# planets
 		for planet in self.planets:
-			planet.blit(screen, self.camera)
+			planet.render(screen, self.camera)
 
 		# asteroids
 		for asteroid in self.asteroids:
-			asteroid.blit(screen, self.camera)
+			asteroid.render(screen, self.camera)
 
 		# probe
-		self.probe.blit(screen, self.camera)
+		self.probe.render(screen, self.camera)
 
 		# aliens
 		for alien in self.aliens:
-			alien.blit(screen, self.camera)
+			alien.render(screen, self.camera)
 
 		# GUI
 		if self.paused:
@@ -235,7 +232,7 @@ class GameScene(Scene):
 		text = font.render("Human Presence : " + hasHumanPresence, True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 85))
 
-		text = font.render("Distance From Sun: " +  str(closestPlanet.distance), True, color)
+		text = font.render("Distance From Sun: " +  str(int(closestPlanet.distance)) + " AU", True, color)
 		screen.blit(text, (descRect.left + 10, descRect.top + 110))
 
 		originalImage = closestPlanet.originalImage
@@ -317,7 +314,7 @@ class GameScene(Scene):
 		if self.currentSelection == 0:
 			self.paused = False
 		elif self.currentSelection == 1:
-			savedGame = SavedGame("Saved Game", self.planets, self.probe, self.aliens)
+			savedGame = SavedGame(self.planets, self.probe, self.aliens, self.levelManager.level.num)
 			savedGame.save()
 			self.paused = False
 		elif self.currentSelection == 2:
@@ -331,31 +328,31 @@ class GameScene(Scene):
 		mousePos = pygame.mouse.get_pos()
 
 		for event in events:
-			if event.type == KEYDOWN and event.key == K_ESCAPE:
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
 				self.paused = not self.paused
 
 			if self.paused:
-				if event.type == MOUSEBUTTONUP:
+				if event.type == pygame.MOUSEBUTTONUP:
 					for i, rect in enumerate(self.selectionsRects):
 						if rect.collidepoint(mousePos):
 							self.selectOnMenu()
-				if event.type == MOUSEMOTION:
+				if event.type == pygame.MOUSEMOTION:
 					for i, rect in enumerate(self.selectionsRects):
 						if rect.collidepoint(mousePos) and i != self.currentSelection:
 							self.selectSound.play()
 							self.currentSelection = i
-				if event.type == KEYDOWN:
-					if event.key == K_DOWN and self.currentSelection < len(self.selections) - 1:
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_DOWN and self.currentSelection < len(self.selections) - 1:
 						self.selectSound.play()
 						self.currentSelection += 1
-					if event.key == K_UP and self.currentSelection > 0:
+					if event.key == pygame.K_UP and self.currentSelection > 0:
 						self.selectSound.play()
 						self.currentSelection -= 1
 					
-					if event.key == K_RETURN or event.key == K_SPACE:
+					if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
 						self.selectOnMenu()
 
 				return
 
-		self.probe.listenToKeyboard(keys)
-		self.camera.listenToKeyboard(keys, events)	
+		self.probe.handleEvents(events, keys)
+		self.camera.handleEvents(events, keys)	
